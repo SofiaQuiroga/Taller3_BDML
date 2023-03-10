@@ -307,4 +307,8 @@ dev.off()
 ## La variable social es dummy, y será igual a 1 si la vivienda tiene espacios sociales, y cero de lo contrario 
 
 # Variable parqueadero 
-parqueadero <- containsstring(test$description, find=c("parqueadero", "parqueaderos"))
+test$descripcion_tokenizado <- tokenize_words(test$description)
+test$parqueadero <- as.integer(as.logical(grepl("parqueadero?", test$descripcion_tokenizado)))
+
+train$descripcion_tokenizado <- tokenize_words(train$description)
+train$parqueadero <- as.integer(as.logical(grepl("parqueadero?", train$descripcion_tokenizado)))
