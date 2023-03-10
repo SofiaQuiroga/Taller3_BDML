@@ -308,7 +308,11 @@ dev.off()
 
 # Variable parqueadero 
 test$descripcion_tokenizado <- tokenize_words(test$description)
-test$parqueadero <- as.integer(as.logical(grepl("parqueadero?", test$descripcion_tokenizado)))
+test$parqueadero <- as.integer(as.logical(grepl(paste(c("parqueadero?", "garaje?"), collapse = "|"), test$descripcion_tokenizado)))
 
 train$descripcion_tokenizado <- tokenize_words(train$description)
-train$parqueadero <- as.integer(as.logical(grepl("parqueadero?", train$descripcion_tokenizado)))
+train$parqueadero <- as.integer(as.logical(grepl(paste(c("parqueadero?", "garaje?"), collapse = "|"), train$descripcion_tokenizado)))
+
+# Variable social
+test$social <- as.integer(as.logical(grepl("socia(l|es)", test$descripcion_tokenizado)))
+train$social <- as.integer(as.logical(grepl("socia(l|es)", train$descripcion_tokenizado)))
