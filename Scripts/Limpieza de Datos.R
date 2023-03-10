@@ -286,7 +286,8 @@ test_descripcion_tokenizado <- setdiff(test_descripcion_tokenizado, lista_palabr
 test_descripcion_tokenizado <- wordStem(test_descripcion_tokenizado, "spanish")
 test_descripcion_tokenizado[1:500]
 
-setwd("C:/Users/Sofia/OneDrive - Universidad de los Andes/8. Octavo Semestre/Big Data y Machine Learning/Talleres/Taller 3")
+# Nota: Revisar este enlace para guardar la nubede palabras funciona! 
+setwd("https://github.com/SofiaQuiroga/Taller3_BDML/tree/main/Views")
 frecuencia <- test_descripcion_tokenizado %>%
   table() %>%
   data.frame() %>%
@@ -298,6 +299,7 @@ png(filename = "wordcloud.png", width = 800, height = 800)
 wordcloud(words = frecuencia$Palabra, freq = frecuencia$Freq, min.freq = 1,
           max.words = 200, random.order=  FALSE, rot.per = 0.35,
           colors = brewer.pal(8, "Dark2"))
+
 dev.off()
 
 ## A partir de las palabras de más usadas en la descripción, se crean las variables parqueadero y social 
