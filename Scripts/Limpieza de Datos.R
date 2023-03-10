@@ -287,7 +287,7 @@ test_descripcion_tokenizado <- wordStem(test_descripcion_tokenizado, "spanish")
 test_descripcion_tokenizado[1:500]
 
 # Nota: Revisar este enlace para guardar la nubede palabras funciona! 
-setwd("https://github.com/SofiaQuiroga/Taller3_BDML/tree/main/Views")
+#setwd("https://github.com/SofiaQuiroga/Taller3_BDML/tree/main/Views")
 frecuencia <- test_descripcion_tokenizado %>%
   table() %>%
   data.frame() %>%
@@ -302,9 +302,10 @@ wordcloud(words = frecuencia$Palabra, freq = frecuencia$Freq, min.freq = 1,
 
 dev.off()
 
-## A partir de las palabras de más usadas en la descripción, se crean las variables parqueadero y social 
+## A partir de las palabras de más usadas en la descripción, se crean las variables parqueadero, social y terraza
 ## La variable parqueadero es dummy, y será igual a 1 si la vivienda tiene parqueadero, y cero de lo contrario 
 ## La variable social es dummy, y será igual a 1 si la vivienda tiene espacios sociales, y cero de lo contrario 
+# La variable terraza es dummy, y será igual a 1 si la vivienda tiene terrasa, y cero de lo contrario
 
 # Variable parqueadero 
 test$descripcion_tokenizado <- tokenize_words(test$description)
@@ -316,3 +317,10 @@ train$parqueadero <- as.integer(as.logical(grepl(paste(c("parqueadero?", "garaje
 # Variable social
 test$social <- as.integer(as.logical(grepl("socia(l|es)", test$descripcion_tokenizado)))
 train$social <- as.integer(as.logical(grepl("socia(l|es)", train$descripcion_tokenizado)))
+
+# Variable terraza 
+test$terraza <- as.integer(as.logical(grepl(paste(c("terraza?", "balcon?"), collapse = "|"), test$descripcion_tokenizado)))
+train$terraza <- as.integer(as.logical(grepl(paste(c("terraza?", "balcon?"), collapse = "|"), train$descripcion_tokenizado)))
+
+## Obtener los metros cuadrados de la descripción 
+test$metros <- str_extract_all(test$description, "[0-9]+ m[t[r][2]?2]")
