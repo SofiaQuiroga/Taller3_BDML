@@ -20,7 +20,6 @@ p_load(tidyverse, # Manipular dataframes
 test <- read.csv(url("https://github.com/SofiaQuiroga/Taller3_BDML/blob/main/Data/test.csv?raw=true"))
 train <- read.csv(url("https://github.com/SofiaQuiroga/Taller3_BDML/blob/main/Data/train.csv?raw=true"))
 
-
 ## Definir el espacio de Chapinero 
 limites <- getbb("Chapinero Bogota Colombia") # da información espacial del mundo especificado
 
@@ -69,7 +68,6 @@ train_sf$distancia_parque <- dist_min_train
 dist_min_test <- apply(dist_matrix_parque_test, 1, min) 
 test$distancia_parque <- dist_min_test
 test_sf$distancia_parque <- dist_min_test
-
 
 ### Feature Engineering. Segunda Variable: Distancia al hospital más cercano
 available_tags("amenity")
@@ -321,6 +319,35 @@ train$social <- as.integer(as.logical(grepl("socia(l|es)", train$descripcion_tok
 # Variable terraza 
 test$terraza <- as.integer(as.logical(grepl(paste(c("terraza?", "balcon?"), collapse = "|"), test$descripcion_tokenizado)))
 train$terraza <- as.integer(as.logical(grepl(paste(c("terraza?", "balcon?"), collapse = "|"), train$descripcion_tokenizado)))
+####
 
 ## Obtener los metros cuadrados de la descripción 
-test$metros <- str_extract_all(test$description, "[0-9]+ m[t[r][2]?2]")
+test$descripcion <- gsub(" ", "", test$description)
+test$metros <- str_extract(test$descripcion, "[0-9]+m[t[r][ts][t2][etros]?2]")
+
+train$descripcion <- gsub(" ", "", train$description)
+train$metros <- str_extract(train$descripcion, "[0-9]+m[t[r][ts][t2][etros]?2]")
+
+# Cambiar los metros que no se encontraron por ceros 
+test$metros <- ifelse(is.na(test$metros), 0, test$metros)
+train$metros <- ifelse(is.na(train$metros), 0, train$metros)
+
+# Dejar solo el número 
+test$metros <- str_replace_all(test$metros, "m[t[r][ts][t2][etros]?2]", "")
+train$metros <- str_replace_all(train$metros, "m[t[r][ts][t2][etros]?2]", "")
+
+# Convertir a número
+test$metros <- as.numeric(test$metros)
+train$metros <- as.numeric(train$metros)
+
+## Unificar variables de supericie total y metros 
+test$surface_total <- ifelse(is.na(test$surface_total), 0, test$surface_total)
+test$surface_total <- ifelse(test$surface_total == 0, test$metros, test$surface_total)
+
+train$surface_total <- ifelse(is.na(train$surface_total), 0, train$surface_total)
+train$surface_total <- ifelse(train$surface_total == 0, train$metros, train$surface_total)
+
+### Arreglar missing values por el vecino cercano 
+p_load(VIM)
+train$surface_total <- as.integer(train$surface_total)
+train_final <- kNN(train, variable=c("surface_covered"), k=8)
