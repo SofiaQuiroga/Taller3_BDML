@@ -24,6 +24,7 @@ variable.names(train_m)
 p_load("SuperLearner")
 listWrappers()
 
+#Primer Intento
 ySL2 <- train_m$price
 xSL2 <- train_m %>% select(bedrooms, distancia_parque, bathrooms, distancia_colegio, distancia_social, terraza, parqueadero)
 sl.lib2 <- c("SL.gbm",  "SL.glm", "SL.lm")
@@ -42,3 +43,17 @@ predicciones_sl2<- data.frame('property_id' = test_m$property_id, "price" = SL2p
 colnames(predicciones_sl2)[2]<-"price"
 write.csv(predicciones_sl2, 'prediccion_SL2.csv',row.names=FALSE)    
 
+#Segundo Intento
+listWrappers()
+ySL3 <- train_m$price
+xSL3 <- train_m %>% select(bedrooms, distancia_parque, bathrooms, distancia_colegio, distancia_social, distancia_policia, distancia_hospital)
+sl.lib3 <- c("SL.gbm",  "SL.ridge", "SL.ranger")
+fitY3 <- SuperLearner(Y= ySL3, X= data.frame(xSL3), method= "method.NNLS", SL.library = sl.lib3)
+fitY3
+##el alpha de ranger es 1
+SL3pred <- predict(fitY3, newdata= test_m2, SLonly=TRUE)$pred
+head(SL3pred)
+
+predicciones_sl3<- data.frame('property_id' = test_m$property_id, "price" = SL3pred )
+colnames(predicciones_sl3)[2]<-"price"
+write.csv(predicciones_sl3, 'prediccion_SL3.csv',row.names=FALSE)    
