@@ -319,12 +319,33 @@ train$social <- as.integer(as.logical(grepl("socia(l|es)", train$descripcion_tok
 # Variable terraza 
 test$terraza <- as.integer(as.logical(grepl(paste(c("terraza?", "balcon?"), collapse = "|"), test$descripcion_tokenizado)))
 train$terraza <- as.integer(as.logical(grepl(paste(c("terraza?", "balcon?"), collapse = "|"), train$descripcion_tokenizado)))
+####
 
 ## Obtener los metros cuadrados de la descripción 
 test$descripcion <- gsub(" ", "", test$description)
-test$metros <- str_extract_all(test$descripcion, "[0-9]+m[t[r][ts][t2][etros]?2]")
+test$metros <- str_extract(test$descripcion, "[0-9]+m[t[r][ts][t2][etros]?2]")
 
 train$descripcion <- gsub(" ", "", train$description)
-train$metros <- str_extract_all(train$descripcion, "[0-9]+m[t[r][ts][t2][etros]?2]")
+train$metros <- str_extract(train$descripcion, "[0-9]+m[t[r][ts][t2][etros]?2]")
 
 # Cambiar los metros que no se encontraron por ceros 
+test$metros <- ifelse(is.na(test$metros), 0, test$metros)
+train$metros <- ifelse(is.na(train$metros), 0, train$metros)
+
+# Dejar solo el número 
+test$metros <- str_replace_all(test$metros, "m[t[r][ts][t2][etros]?2]", "")
+train$metros <- str_replace_all(train$metros, "m[t[r][ts][t2][etros]?2]", "")
+
+# Convertir a número
+test$metros <- as.numeric(test$metros)
+train$metros <- as.numeric(train$metros)
+
+## Unificar variables de supericie total y metros 
+test$surface_total <- ifelse(is.na(test$surface_total), 0, test$surface_total)
+test$surface_total <- ifelse(test$surface_total == 0, test$metros, test$surface_total)
+
+test$surface_total <- is.numeric(test$surface_total)
+test$area <- max(test$surface_total, test$metros, na.rm = FALSE)
+
+test$surface_total <- mutate(test$surface_total, )
+test$sufarce_total <- ifelse(is.na(test$sufarce_total), test$metros, test$sufarce_total)
