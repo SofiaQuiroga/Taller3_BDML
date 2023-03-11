@@ -20,7 +20,6 @@ p_load(tidyverse, # Manipular dataframes
 test <- read.csv(url("https://github.com/SofiaQuiroga/Taller3_BDML/blob/main/Data/test.csv?raw=true"))
 train <- read.csv(url("https://github.com/SofiaQuiroga/Taller3_BDML/blob/main/Data/train.csv?raw=true"))
 
-
 ## Definir el espacio de Chapinero 
 limites <- getbb("Chapinero Bogota Colombia") # da información espacial del mundo especificado
 
@@ -69,7 +68,6 @@ train_sf$distancia_parque <- dist_min_train
 dist_min_test <- apply(dist_matrix_parque_test, 1, min) 
 test$distancia_parque <- dist_min_test
 test_sf$distancia_parque <- dist_min_test
-
 
 ### Feature Engineering. Segunda Variable: Distancia al hospital más cercano
 available_tags("amenity")
@@ -323,4 +321,10 @@ test$terraza <- as.integer(as.logical(grepl(paste(c("terraza?", "balcon?"), coll
 train$terraza <- as.integer(as.logical(grepl(paste(c("terraza?", "balcon?"), collapse = "|"), train$descripcion_tokenizado)))
 
 ## Obtener los metros cuadrados de la descripción 
-test$metros <- str_extract_all(test$description, "[0-9]+ m[t[r][2]?2]")
+test$descripcion <- gsub(" ", "", test$description)
+test$metros <- str_extract_all(test$descripcion, "[0-9]+m[t[r][ts][t2][etros]?2]")
+
+train$descripcion <- gsub(" ", "", train$description)
+train$metros <- str_extract_all(train$descripcion, "[0-9]+m[t[r][ts][t2][etros]?2]")
+
+# Cambiar los metros que no se encontraron por ceros 
