@@ -344,8 +344,10 @@ train$metros <- as.numeric(train$metros)
 test$surface_total <- ifelse(is.na(test$surface_total), 0, test$surface_total)
 test$surface_total <- ifelse(test$surface_total == 0, test$metros, test$surface_total)
 
-test$surface_total <- is.numeric(test$surface_total)
-test$area <- max(test$surface_total, test$metros, na.rm = FALSE)
+train$surface_total <- ifelse(is.na(train$surface_total), 0, train$surface_total)
+train$surface_total <- ifelse(train$surface_total == 0, train$metros, train$surface_total)
 
-test$surface_total <- mutate(test$surface_total, )
-test$sufarce_total <- ifelse(is.na(test$sufarce_total), test$metros, test$sufarce_total)
+### Arreglar missing values por el vecino cercano 
+p_load(VIM)
+train$surface_total <- as.integer(train$surface_total)
+train_final <- kNN(train, variable=c("surface_covered"), k=8)
