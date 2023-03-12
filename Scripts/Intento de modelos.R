@@ -1,7 +1,7 @@
 ####Otra prueba de modelos : lm, logreg, gbm, ridge, lasso, ranger y random forest
 ##Super learners
 require(pacman)
-p_load(SuperLearner,tidyverse,rpart,caret, gbm, biglasso)
+p_load(SuperLearner,tidyverse,rpart,caret, gbm, biglasso, randomForest)
 
 # Review available models.
 listWrappers()
@@ -98,12 +98,11 @@ custom_ranger = create.Learner("SL.ranger", params = list(num.trees = 1000))
 custom_ranger$names
 
 # Customize the defaults for random forest
-custom_rf = create.Learner("SL.randomForest",
-                           tune = list(mtry = round(c(1, sqrt(4), 3))))
+custom_rf = create.Learner("SL.randomForest",tune = list(mtry = round(c(1, sqrt(4), 3))))
 custom_rf$names
 
 # Customize the defaults for glmnet
-custon_glmnet = create.Learner("SL.glmnet", tune = list(alpha = seq(0, 1, length.out=5)))
+custom_glmnet = create.Learner("SL.glmnet", tune = list(alpha = seq(0, 1, length.out=5)))
 
 # Look at the object.
 custom_glmnet$names
@@ -113,8 +112,7 @@ sl.lib2 <- c("SL.randomForest", "SL.lm",custom_ranger$names, custom_rf$names, cu
 sl.lib2
 
 #El Fit
-fitY_custom <- SuperLearner(Y = YSL, X = data.frame(XSL),
-                            method = "method.NNLS", SL.library = sl.lib2)
+fitY_custom <- SuperLearner(Y = YSL, X = data.frame(XSL),method = "method.NNLS", SL.library = sl.lib2)
 fitY_custom
 
 #Predicción

@@ -57,3 +57,19 @@ head(SL3pred)
 predicciones_sl3<- data.frame('property_id' = test_m$property_id, "price" = SL3pred )
 colnames(predicciones_sl3)[2]<-"price"
 write.csv(predicciones_sl3, 'prediccion_SL3.csv',row.names=FALSE)    
+
+#Tercer Intento
+listWrappers()
+ySL4 <- train_m$price
+xSL4 <- train_m %>% select(bedrooms, distancia_parque, bathrooms, distancia_colegio, distancia_social, distancia_policia, distancia_hospital)
+sl.lib4 <- c( "SL.ranger","SL.randomForest" )
+fitY4 <- SuperLearner(Y= ySL4, X= data.frame(xSL4), method= "method.NNLS", SL.library = sl.lib4)
+fitY4
+##el alpha de randomForest es 0.6, de ranger es 0.36 :)
+SL4pred <- predict(fitY4, newdata= test_m2, SLonly=TRUE)$pred
+head(SL4pred)
+
+predicciones_sl4<- data.frame('property_id' = test_m$property_id, "price" = SL4pred )
+colnames(predicciones_sl4)[2]<-"price"
+write.csv(predicciones_sl4, 'prediccion_SL4.csv',row.names=FALSE)    
+
