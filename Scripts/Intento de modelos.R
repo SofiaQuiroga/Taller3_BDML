@@ -9,39 +9,103 @@ variable.names(train2)
 
 ##Tratar los missings (de forma diferente: con la mediana)
 
-# Cambio de missing values por la mediana 
+# Cambio de missing values por la mediana (incluyendo el surface covered)
 train_mediana <- train
+#Reemplazo los surface_covered en 0 por NA para luego poner la mediana
+library(dplyr) 
+train_mediana <- train_mediana %>% mutate_at(c('surface_covered'), ~na_if(., 0))
 train_mediana <- train_mediana %>% mutate(across(where(is.numeric), ~replace_na(., median(., na.rm = TRUE))))
 
 
-#Primero: lm,logreg,gbm,ridge
+#Con la base que tenemos
 
-YSL <- train$price
-XSL<- train_mediana %>% select(bedrooms,bathrooms,property_type,distancia_parque,distancia_hospital,distancia_policia,distancia_social,distancia_banco,distancia_colegio,parqueadero,social)
+#cambio de NA a 0
 
+train_1 <- train
+test_1 <- test
+
+train_1$bathrooms<- ifelse(is.na(train_1$bathrooms),0,train_1$bathrooms)
+train_1$property_type<- ifelse(train_1$property_type=="Apartamento",0,1)
+
+test_1$bathrooms<- ifelse(is.na(test_1$bathrooms),0,test_1$bathrooms)
+test_1$property_type<- ifelse(test_1$property_type=="Apartamento",0,1)
+
+
+YSL <- train_1$price
+XSL<- train_1 %>% select(surface_covered,bedrooms,bathrooms,property_type,distancia_parque,distancia_hospital,distancia_policia,distancia_social,distancia_banco,distancia_colegio,parqueadero,social)
+sl.lib <- c("SL.lm", "SL.gbm",  "SL.ridge") #lista de los algoritmos a correr
+
+# Fit using the SuperLearner package,
+
+fitY_1 <- SuperLearner(Y = YSL,  X= data.frame(XSL),
+                       method = "method.NNLS", # combinación convexa
+                       SL.library = sl.lib)
+fitY_1
+
+
+
+#Segundo: lm,glmnet,gbm
+
+YSL_2 <- train_1$price
+XSL_2<- train_1 %>% select(bedrooms,bathrooms,property_type,distancia_parque,distancia_hospital,distancia_policia,distancia_social,distancia_banco,distancia_colegio,parqueadero,social)
 
 #sl.lib <- c("SL.randomForest", "SL.lm") #lista de los algoritmos a correr
 
-sl.lib <- c("SL.lm", "SL.logreg", "SL.gbm",  "SL.ridge") #lista de los algoritmos a correr
+sl.lib <- c("SL.lm", "SL.glmnet", "SL.gbm",  "SL.ridge") #lista de los algoritmos a correr
+
+# Fit using the SuperLearner package,
+
+fitY <- SuperLearner(Y = YSL_2,  X= data.frame(XSL_2),
+                       method = "method.NNLS", # combinación convexa
+                       SL.library = sl.lib)
+
+fitY_2
+
+#Tercero: biglasso, glmnet, lm, gbm
+YSL_3 <- train_1$price
+XSL_3<- train_1 %>% select(bedrooms,bathrooms,property_type,distancia_parque,distancia_hospital,distancia_policia,distancia_social,distancia_banco,distancia_colegio,parqueadero,social)
+
+sl.lib <- c("SL.lm", "SL.glmnet", "SL.gbm", "SL.biglasso" ) #lista de los algoritmos a correr
+
+# Fit using the SuperLearner package,
+
+fitY_3 <- SuperLearner(Y = YSL_3,  X= data.frame(XSL_3),
+                       method = "method.NNLS", # combinación convexa
+                       SL.library = sl.lib)
+
+fitY_3
+
+
+
+
+
+
+YSL <- train_mediana$price
+XSL<- train_mediana %>% select(surface_covered,bedrooms,bathrooms,property_type,distancia_parque,distancia_hospital,distancia_policia,distancia_social,distancia_banco,distancia_colegio,parqueadero,social)
+sl.lib <- c("SL.lm", "SL.gbm",  "SL.ridge") #lista de los algoritmos a correr
 
 # Fit using the SuperLearner package,
 
 fitY_1 <- SuperLearner(Y = YSL,  X= data.frame(XSL),
                      method = "method.NNLS", # combinación convexa
                      SL.library = sl.lib)
+fitY_1
 
-fitY_!
 
 
-#Segundo: lm,logreg,gbm
+#Primero: lm,gbm,ridge --> no funcionó
 
-YSL_2 <- train$price
-XSL_2<- train2 %>% select(bedrooms,bathrooms,property_type,distancia_parque,distancia_hospital,distancia_policia,distancia_social,distancia_banco,distancia_colegio,parqueadero,social)
+#sl.lib <- c("SL.randomForest", "SL.lm") #lista de los algoritmos a correr
+
+#Segundo: lm,glmnet,gbm
+
+YSL_2 <- train_mediana$price
+XSL_2<- train_mediana %>% select(bedrooms,bathrooms,property_type,distancia_parque,distancia_hospital,distancia_policia,distancia_social,distancia_banco,distancia_colegio,parqueadero,social)
 
 
 #sl.lib <- c("SL.randomForest", "SL.lm") #lista de los algoritmos a correr
 
-sl.lib <- c("SL.lm", "SL.logreg", "SL.gbm",  "SL.ridge") #lista de los algoritmos a correr
+sl.lib <- c("SL.lm", "SL.glmnet", "SL.gbm",  "SL.ridge") #lista de los algoritmos a correr
 
 # Fit using the SuperLearner package,
 
