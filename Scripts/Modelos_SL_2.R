@@ -73,3 +73,4 @@ predicciones_sl4<- data.frame('property_id' = test_m$property_id, "price" = SL4p
 colnames(predicciones_sl4)[2]<-"price"
 write.csv(predicciones_sl4, 'prediccion_SL4.csv',row.names=FALSE)    
 
+
