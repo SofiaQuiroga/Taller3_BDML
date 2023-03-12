@@ -7,10 +7,17 @@ p_load(SuperLearner,tidyverse,rpart,caret, gbm)
 listWrappers()
 variable.names(train2)
 
+##Tratar los missings (de forma diferente: con la mediana)
+
+# Cambio de missing values por la mediana 
+train_mediana <- train
+train_mediana <- train_mediana %>% mutate(across(where(is.numeric), ~replace_na(., median(., na.rm = TRUE))))
+
+
 #Primero: lm,logreg,gbm,ridge
 
 YSL <- train$price
-XSL<- train2 %>% select(bedrooms,bathrooms,property_type,distancia_parque,distancia_hospital,distancia_policia,distancia_social,distancia_banco,distancia_colegio,parqueadero,social)
+XSL<- train_mediana %>% select(bedrooms,bathrooms,property_type,distancia_parque,distancia_hospital,distancia_policia,distancia_social,distancia_banco,distancia_colegio,parqueadero,social)
 
 
 #sl.lib <- c("SL.randomForest", "SL.lm") #lista de los algoritmos a correr
@@ -101,7 +108,7 @@ fitY_custom
 ######################################### TRATAR CON LOS MISSSINGS 
 
 test$surface_total <- ifelse(is.na(test$surface_total), 0, test$surface_total)
-
+train$surface_total <- ifelse(is.na(train$surface_total), 0, train$surface_total)
 
 
 test$descripcion <- gsub(" ", "", test$description)
@@ -126,6 +133,9 @@ train$metros <- as.numeric(train$metros)
 test$surface_covered <- ifelse(is.na(test$surface_covered), 0, test$surface_covered)
 test$surface_covered <- ifelse(test$surface_covered == 0, test$metros, test$surface_covered)
 
+## Unificar variables de supericie total y metros 
+train$surface_covered <- ifelse(is.na(train$surface_covered), 0, train$surface_covered)
+train$surface_covered <- ifelse(train$surface_covered == 0, train$metros, train$surface_covered)
 
 
 
