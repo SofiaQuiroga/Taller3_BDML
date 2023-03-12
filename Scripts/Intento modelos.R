@@ -43,8 +43,6 @@ colnames(predicciones_sl_1)[2]<-"price"
 write.csv(predicciones_sl1, 'prediccion_SL_1.csv',row.names=FALSE)    
 
 
-
-
 #Segundo: lm,glmnet,gbm
 
 YSL_2 <- train_1$price
