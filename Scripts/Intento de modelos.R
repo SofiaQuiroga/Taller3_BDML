@@ -52,7 +52,7 @@ XSL_2<- train_1 %>% select(bedrooms,bathrooms,property_type,distancia_parque,dis
 
 #sl.lib <- c("SL.randomForest", "SL.lm") #lista de los algoritmos a correr
 
-sl.lib <- c("SL.lm", "SL.glmnet", "SL.gbm",  "SL.ridge") #lista de los algoritmos a correr
+sl.lib <- c("SL.ranger", "SL.lm", "SL.glmnet", "SL.gbm",  "SL.ridge") #lista de los algoritmos a correr
 
 # Fit using the SuperLearner package,
 
@@ -60,6 +60,7 @@ fitY <- SuperLearner(Y = YSL_2,  X= data.frame(XSL_2),
                        method = "method.NNLS", # combinación convexa
                        SL.library = sl.lib)
 fitY_2
+
 
 #Tercero: glmnet, lm, gbm
 YSL_3 <- train_1$price
