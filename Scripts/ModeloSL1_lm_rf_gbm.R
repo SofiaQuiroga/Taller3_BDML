@@ -37,3 +37,34 @@ variable.names(test2)
 Pred_SL1<- data.frame('property_id' = test2$property_id, "price" = SL1pred2 )
 colnames(Pred_SL1)[2]<-"price"
 write.csv(Pred_SL1, 'Pred_SL1.csv',row.names=FALSE)       
+
+################### nuevas varaibles y mas complejidad ##################
+
+#hacemos los clusters
+Clusters<- train_sf%>%  select(geometry)
+Clusters1<- test_sf%>% select(geometry)
+Clusters<-st_distance(Clusters)
+Clusters1<-st_distance(Clusters1)
+Clusters<-units::drop_units(Clusters)
+Clusters1<-units::drop_units(Clusters1)
+
+##vemos cuantos clusters usar con el metodo del codo
+wss <- function(k) {
+ kmeans(Clusters, k, nstart = 15 )$tot.withinss
+}
+
+# 
+wss_values <- sapply(1:5,wss)
+
+plot(1:5, wss_values,
+     type="b", pch = 19, frame = FALSE, 
+     xlab="Número de clusters (K)",
+     ylab="SSR within-clusters total")
+
+
+### 
+k3 <- kmeans(Clusters, centers = 3, nstart = 15)
+train3<- train %>% mutate(cluster= factor(k3$cluster))
+K31<-kmeans(Clusters, centers = 3, nstart = 15)
+test3<- test %>% mutate(cluster= factor(k31$cluster))
+
