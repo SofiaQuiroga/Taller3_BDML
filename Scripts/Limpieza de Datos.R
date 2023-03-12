@@ -353,9 +353,12 @@ train$surface_total <- as.integer(train$surface_total)
 train_final <- kNN(train, variable=c("surface_covered"), k=8)
 
 #####Crear la variable de estrato por localidades.
-localidades<- st_read("https://github.com/SofiaQuiroga/Taller3_BDML/raw/main/Data/poligonos-localidades.geojson")
+##¡¡¡¡tener cuidado con esta varible, ya que al variar muy poco puede generar ruido en el modelo, voy a hacer pruebas con ella!!!!!!!. 
+##Creamos los datos de las localidades 
 
-Sf_localidades <- st_join(train_sf, localidades)
+localidades<- st_read("https://github.com/SofiaQuiroga/Taller3_BDML/raw/main/Data/poligonos-localidades.geojson")
+Sf_localidades_train<- st_join(train_sf, localidades)
+Sf_localidades_test<- st_join(test_sf, localidades)
 
 localidad_names <- localidades$Nombre.de.la.localidad
 
@@ -369,23 +372,37 @@ is_in_localidad <- function(location, localidad) {
 }
 #usamos un loop para crear las varaibles de todas las localidades
 for (localidad in localidad_names) {
-  Sf_localidades[[localidad]] <- apply(Sf_localidades, 1, function(x) is_in_localidad(x, localidad))
+  Sf_localidades_train[[localidad]] <- apply(Sf_localidades_train, 1, function(x) is_in_localidad(x, localidad))
 }
 
+for (localidad in localidad_names) {
+  Sf_localidades_test[[localidad]] <- apply(Sf_localidades_test, 1, function(x) is_in_localidad(x, localidad))
+}
 #colocamos los estratos a cada localidad
-Sf_localidades<-data.frame(Sf_localidades)
-Sf_localidades$estrato<-0
-names(Sf_localidades)
-Sf_localidades$estrato <- ifelse(Sf_localidades$CIUDAD.BOLIVAR==1 |Sf_localidades$USME==1 , 1, Sf_localidades$estrato)
-Sf_localidades$estrato <- ifelse(Sf_localidades$BOSA ==1 |Sf_localidades$SAN.CRISTOBAL ==1|Sf_localidades$TUNJUELITO ==1|Sf_localidades$RAFAEL.URIBE.URIBE ==1 , 2, Sf_localidades$estrato)
-Sf_localidades$estrato <- ifelse(Sf_localidades$KENNEDY ==1 | Sf_localidades$ENGATIVA ==1 | Sf_localidades$PUENTE.ARANDA ==1 |Sf_localidades$ANTONIO.NARIÑO ==1|Sf_localidades$LOS.MARTIRES ==1 
-                                 |Sf_localidades$CANDELARIA ==1 |Sf_localidades$SANTA.FE ==1|Sf_localidades$BARRIOS.UNIDOS ==1 , 3, Sf_localidades$estrato)
-Sf_localidades$estrato <- ifelse(Sf_localidades$TEUSAQUILLO ==1 | Sf_localidades$SUBA ==1 | Sf_localidades$FONTIBON ==1, 4, Sf_localidades$estrato)
-Sf_localidades$estrato <- ifelse(Sf_localidades$USAQUEN ==1, 5, Sf_localidades$estrato)
-Sf_localidades$estrato <- ifelse(Sf_localidades$CHAPINERO ==1, 6, Sf_localidades$estrato)
+Sf_localidades_train<-data.frame(Sf_localidades_train)
+Sf_localidades_train$estrato<-0
+names(Sf_localidades_train)
+Sf_localidades_train$estrato <- ifelse(Sf_localidades_train$CIUDAD.BOLIVAR==1 |Sf_localidades_train$USME==1 , 1, Sf_localidades_train$estrato)
+Sf_localidades_train$estrato <- ifelse(Sf_localidades_train$BOSA ==1 |Sf_localidades_train$SAN.CRISTOBAL ==1|Sf_localidades_train$TUNJUELITO ==1|Sf_localidades_train$RAFAEL.URIBE.URIBE ==1 , 2, Sf_localidades_train$estrato)
+Sf_localidades_train$estrato <- ifelse(Sf_localidades_train$KENNEDY ==1 | Sf_localidades_train$ENGATIVA ==1 | Sf_localidades_train$PUENTE.ARANDA ==1 |Sf_localidades_train$ANTONIO.NARIÑO ==1|Sf_localidades_train$LOS.MARTIRES ==1 
+                                       |Sf_localidades_train$CANDELARIA ==1 |Sf_localidades_train$SANTA.FE ==1|Sf_localidades_train$BARRIOS.UNIDOS ==1 , 3, Sf_localidades_train$estrato)
+Sf_localidades_train$estrato <- ifelse(Sf_localidades_train$TEUSAQUILLO ==1 | Sf_localidades_train$SUBA ==1 | Sf_localidades_train$FONTIBON ==1, 4, Sf_localidades_train$estrato)
+Sf_localidades_train$estrato <- ifelse(Sf_localidades_train$USAQUEN ==1, 5, Sf_localidades_train$estrato)
+Sf_localidades_train$estrato <- ifelse(Sf_localidades_train$CHAPINERO ==1, 6, Sf_localidades_train$estrato)
 
+#
+Sf_localidades_test<-data.frame(Sf_localidades_test)
+Sf_localidades_test$estrato<-0
+names(Sf_localidades_test)
+Sf_localidades_test$estrato <- ifelse(Sf_localidades_test$KENNEDY ==1 | Sf_localidades_test$ENGATIVA ==1 | Sf_localidades_test$PUENTE.ARANDA ==1 |Sf_localidades_test$ANTONIO.NARIÑO ==1|Sf_localidades_test$LOS.MARTIRES ==1 
+                                      |Sf_localidades_test$CANDELARIA ==1 |Sf_localidades_test$SANTA.FE ==1|Sf_localidades_test$BARRIOS.UNIDOS ==1 , 3, Sf_localidades_test$estrato)
+Sf_localidades_test$estrato <- ifelse(Sf_localidades_test$USAQUEN ==1, 5, Sf_localidades_test$estrato)
+Sf_localidades_test$estrato <- ifelse(Sf_localidades_test$CHAPINERO ==1, 6, Sf_localidades_test$estrato)
 #Pasamos los estratos a la base normal
-train$estrato<- Sf_localidades$estrato
-                       
+train$estrato<- Sf_localidades_train$estrato
+test$estrato <- Sf_localidades_test$estrato
+
+
+############################################
                       
                        
