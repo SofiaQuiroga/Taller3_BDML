@@ -13,6 +13,9 @@ test_m$property_type<- ifelse(test_m$property_type=="Apartamento",0,1)
 train_m <- train_m %>% mutate(across(where(is.numeric), ~replace_na(., median(., na.rm = TRUE))))
 test_m <- test_m %>% mutate(across(where(is.numeric), ~replace_na(., median(., na.rm = TRUE))))
 
+saveRDS(train_m, "train_m.rds")
+saveRDS(test_m, "test_m.rds")
+
 ### Super Learner 
 p_load("SuperLearner")
 
