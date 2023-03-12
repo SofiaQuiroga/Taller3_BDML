@@ -39,6 +39,10 @@ fitY_1 <- SuperLearner(Y = YSL,  X= data.frame(XSL),
                        method = "method.NNLS", # combinación convexa
                        SL.library = sl.lib)
 fitY_1
+##Coeficiente de gbm es igual a 1, los demás son cero
+
+
+
 
 
 #Segundo: lm,glmnet,gbm
@@ -57,14 +61,13 @@ fitY <- SuperLearner(Y = YSL_2,  X= data.frame(XSL_2),
                        SL.library = sl.lib)
 fitY_2
 
-#Tercero: biglasso, glmnet, lm, gbm
+#Tercero: glmnet, lm, gbm
 YSL_3 <- train_1$price
 XSL_3<- train_1 %>% select(bedrooms,bathrooms,property_type,distancia_parque,distancia_hospital,distancia_policia,distancia_social,distancia_banco,distancia_colegio,parqueadero,social)
 
-sl.lib <- c("SL.lm", "SL.glmnet", "SL.gbm", "SL.biglasso" ) #lista de los algoritmos a correr
+sl.lib <- c("SL.lm", "SL.glmnet", "SL.gbm") #lista de los algoritmos a correr
 
 # Fit using the SuperLearner package,
-
 fitY_3 <- SuperLearner(Y = YSL_3,  X= data.frame(XSL_3),
                        method = "method.NNLS", # combinación convexa
                        SL.library = sl.lib)
