@@ -22,3 +22,11 @@ sumtable(preditores_descripcion)
 train_predictors <- train %>% select(surface_covered, bedrooms, rooms, bathrooms,distancia_parque, distancia_hospital, distancia_colegio, distancia_social, distancia_policia, distancia_banco,terraza, parqueadero, social)
 cor(train_predictors)
 
+
+# Distribución de nuestra variable de precio de viviendas
+p <- ggplot(train, aes(x = price)) +
+  geom_histogram(fill = "darkblue", alpha = 0.4) +
+  labs(x = "Precio de la vivienda", y = "Cantidad")+
+  labs(title = "Distribución precio de viviendas") +
+  theme_bw()
+ggplotly(p)
