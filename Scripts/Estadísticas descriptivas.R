@@ -4,48 +4,21 @@
 require("pacman")
 p_load("tidyverse","rvest", "stargazer","vtable") ##cargamos los paquetes.
 
-#Estadísticas descriptivas para la base de train (missings con ceros)
-sumtable(train2)
+#Estadísticas descriptivas para la base de train (con Na)
+
+#Ya contenidas en la base: rooms, bedrooms, bathrooms, surface covered
+predictores_train <- train %>% select(price, surface_covered, bedrooms, rooms, bathrooms)
+sumtable(predictores_train)
+
+#Distancia (extraídas a partir del OSM)
+predictores_OSM <- train %>% select(distancia_parque, distancia_hospital, distancia_colegio, distancia_social, distancia_policia, distancia_banco)
+sumtable(predictores_OSM)
+
+#Descipción
+preditores_descripcion <- train %>% select(terraza, parqueadero, social)
+sumtable(preditores_descripcion)
 
 
+#Tabla de correlacion
+cor(train)
 
-
-
-
-
-#Gráfica de distribución del ingreso (en pesos colombianos)
-
-ggplot(train2, aes(x = Ingtot_hogar)) +
-  geom_histogram(fill = "darkblue") +
-  theme_bw() +
-  labs(x = "Ingreso total por hogar (COP)", y = "Cantidad", title="Distribución del Ingreso Total de los Hogares")
-
-#Gráfico de la distribución de pobreza 
-
-#Label variables 
-
-train2$Pobre <- factor(train2$Pobre,
-                       levels=c(0,1),
-                       labels= c("no", "si"))
-
-
-ggplot(train2, aes(y=Pobre)) + geom_bar(aes(x = (..count..)/sum(..count..)),
-                                        fill = "darkblue") + labs(title ="Distribución de la variable de Pobreza del Hogar", x = "Proporción (%)") +
-  scale_x_continuous(labels = scales::percent) +
-  theme_bw()
-
-##Uniendo las dos gráficas en una sola
-
-g1<- ggplot(train2, aes(x = Ingtot_hogar)) +
-  geom_histogram(fill = "darkblue") +
-  theme_bw() +
-  labs(x = "Ingreso total por hogar (COP)", y = "Cantidad", title="Distribución del Ingreso Total")
-
-
-g2<- ggplot(train2, aes(y=Pobre)) + geom_bar(aes(x = (..count..)/sum(..count..)),
-                                             fill = "skyblue") + labs(title ="Distribución de Pobreza", x = "Proporción (%)") +
-  scale_x_continuous(labels = scales::percent) +
-  theme_bw()
-
-
-grid.arrange(g1, g2, ncol = 2)
