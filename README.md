@@ -1,14 +1,14 @@
 # Taller3_BDML
  Este es el repositorio del taller 3 del curso Big Data y Machine Learning.
- El objetivo de este taller es analizar y predecir el precio de las propiedades de la localidad de Chapinero en Bogota, 
- a partir de ciertas características estrucuturales y geográficas de las viviendas. 
+ El objetivo de este taller es analizar y predecir el precio de las propiedades de la localidad de Chapinero en Bogotá, 
+ a partir de ciertas características estructurales y geográficas de las viviendas. 
 
- El taller está construido en el lenguaje de programación de R, el cual es un lenguaje para 
- análisis estadístico y grafico de libre acceso 
+ El taller está construido en el lenguaje de programación de R, el cual es un lenguaje para análisis estadístico y 
+ gráfico de libre acceso 
  "https://www.r-project.org/"
 
- Para poder utilizar el software, se requiere la aplicación de RStudio la cual facilita un entorno de 
- desarrollo para poder utilizar el lenguaje de programación.
+ Para poder utilizar el software, se requiere la aplicación de RStudio la cual facilita un entorno de  desarrollo para 
+ poder utilizar el lenguaje de programación.
  "https://www.r-studio.com/"
 
  La base de datos utilizada es la suministrada de Properati. La Base fue descargada de Kaggle, en donde se participó con los 
