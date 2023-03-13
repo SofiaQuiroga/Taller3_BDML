@@ -18,7 +18,7 @@ sumtable(predictores_OSM)
 preditores_descripcion <- train %>% select(terraza, parqueadero, social)
 sumtable(preditores_descripcion)
 
-
 #Tabla de correlacion
-cor(train)
+train_predictors <- train %>% select(surface_covered, bedrooms, rooms, bathrooms,distancia_parque, distancia_hospital, distancia_colegio, distancia_social, distancia_policia, distancia_banco,terraza, parqueadero, social)
+cor(train_predictors)
 
