@@ -101,6 +101,14 @@ dist_min_test <- apply(dist_matrix_hospital_test, 1, min)
 test$distancia_hospital <- dist_min_test
 test_sf$distancia_hospital <- dist_min_test
 
+# Gráfico hospitales 
+leaflet() %>%
+  addTiles() %>%
+  addPolygons(data = hospitales_geometria, col = "green",
+              opacity = 0.8, popup = hospitales_geometria$name) %>%
+  addCircles(lng = centroide_hospital$x, 
+             lat = centroide_hospital$y, 
+             col = "red", opacity = 1, radius = 1) 
 
 ### Feature Engineering. Tercera Variable: Distancia a la estación de polícia más cercana 
 available_tags("amenity")
@@ -134,6 +142,17 @@ dist_min_test <- apply(dist_matrix_policia_test, 1, min)
 test$distancia_policia <- dist_min_test
 test_sf$distancia_policia <- dist_min_test
 
+## Relación entre la proximidad de la estación de policía y el valor de la propiedad 
+p <- ggplot(train, aes(x = distancia_policia, y = price)) +
+  geom_point(col = "darkblue", alpha = 0.4) +
+  labs(x = "Distancia mínima a una estación de policía en metros", 
+       y = "Precio de la propiedad",
+       title = "Relación entre la proximidad de una estación de polícia y el valor del la propiedad") +
+  scale_x_log10() +
+  scale_y_log10(labels = scales::dollar) +
+  theme_bw()
+
+ggplotly(p)
 
 ### Feature Engineering. Cuarta Variable: Distancia al social centre más cercano 
 available_tags("amenity")
