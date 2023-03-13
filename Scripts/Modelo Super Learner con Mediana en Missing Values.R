@@ -45,3 +45,37 @@ resultados <- data.frame("property_id" = test_m$property_id, "price" = price_SL)
 colnames(resultados)[2] <- "price"
 setwd("C:/Users/Sofia/OneDrive - Universidad de los Andes/8. Octavo Semestre/Big Data y Machine Learning/Talleres/Taller 3")
 write.csv(resultados, 'SuperLearner_price.csv',row.names=FALSE) 
+
+
+### Super Learner 2.0
+# Definir libreria 
+listWrappers()
+
+custon_ranger = create.Learner("SL.ranger", params = list(num.trees = 500))
+custon_ranger$names
+
+custom_rf = create.Learner("SL.randomForest",
+                           tune = list(mtry = round(c(1, sqrt(4), 4))))
+custom_rf$names
+
+custon_glmnet = create.Learner("SL.glmnet", tune = list(alpha = seq(0, 1, length.out=4)))
+custon_glmnet$names
+
+sl.lib2 <- c("SL.randomForest", "SL.lm",custon_ranger$names,custom_rf$names, custon_glmnet$names)
+sl.lib2
+
+fitY_long <- SuperLearner(Y = ySL, X = data.frame(XSL),
+                          method = "method.NNLS", SL.library = sl.lib2)
+
+fitY_long
+
+# Predicción 
+price_SL <- predict(fitY, newdata = test_m, onlySL = TRUE)
+price_SL <- data.frame(price_SL) 
+price_SL<- price_SL[,-c(2:5)]
+price_SL <- data.frame(price_SL) 
+
+resultados <- data.frame("property_id" = test_m$property_id, "price" = price_SL)
+colnames(resultados)[2] <- "price"
+setwd("C:/Users/Sofia/OneDrive - Universidad de los Andes/8. Octavo Semestre/Big Data y Machine Learning/Talleres/Taller 3")
+write.csv(resultados, 'SuperLearner_price.csv',row.names=FALSE) 
